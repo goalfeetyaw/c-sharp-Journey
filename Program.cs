@@ -1,0 +1,164 @@
+﻿    class usernameHandler
+    {
+        static IDictionary<string, string> url = new Dictionary<string, string>()
+        {
+            {"1", "https://github.com/"},
+            {"2", "https://www.snapchat.com/add/"},
+            {"3", "https://leetcode.com/"}, 
+            {"4", "https://www.codewars.com/users/"},
+            {"5", "https://www.youtube.com/@" },
+            {"6", "https://steamcommunity.com/id" }
+        };
+
+        static IDictionary<string, string> platform = new Dictionary<string, string>()
+        {
+            {"1", "Github"},
+            {"2", "Snapchat"},
+            {"3", "Leetcode"},
+            {"4", "Codewars"},
+            {"5", "YouTube" },
+            {"6" ,"SteamID" }
+        };
+
+        static readonly HttpClient client = new HttpClient();
+        
+        static async Task check(String type)
+        {
+
+            Console.WriteLine("Would you like to create an output file? (Y/N)");
+
+            bool output = Console.ReadLine().ToLower() == "y";
+
+            string path = "username.txt";
+
+            bool exists = File.Exists(path);
+
+            if (!exists)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("usernames.txt does not exist!");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine("Would you like to create a template? (Y/N)");
+                String template = Console.ReadLine();
+
+                if(template.ToLower().Equals("y"))
+                {
+                    File.WriteAllText(path, "a\nb\nc");
+
+                    if (File.Exists(path))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Template created!");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Error creating template");
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine("Exiting...");
+                    Environment.Exit(0);
+
+                }
+            }
+
+            var lines = File.ReadAllLines("username.txt");
+            foreach (string line in lines)
+            {
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    continue;
+                }
+
+                
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Checking " + platform[type] + " username " + line + "...");
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    String final_url = url[type] + line;
+
+                    var response = await client.GetAsync(final_url);
+                    var resCode = response.StatusCode;
+                    bool valid_res = (int)resCode == 200 || (int)resCode == 404;
+
+                    if (valid_res)
+                    {
+                            bool valid = (int)resCode != 200;
+                            if (valid)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine(platform[type] + " username: " + line + " is not taken!");
+                                if(output)
+                                {
+                                   File.AppendAllText(platform[type] + ".txt", line + " -> Not Taken \n");
+                                   Console.WriteLine("Saved to " + platform[type] + ".txt");
+                                }
+                                 Console.ForegroundColor = ConsoleColor.White;
+                            }
+                            else
+                            {
+                                   Console.ForegroundColor = ConsoleColor.Red;
+                                   Console.WriteLine(platform[type] + " username: " + line + " is taken!");
+                                   Console.ForegroundColor = ConsoleColor.White;
+                            }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error sending request -> " + resCode);
+                    }
+                    
+                    
+            }
+            Console.WriteLine("would you like to check another platform? (Y/N)");
+        }
+
+        public void start()
+        {
+            Console.WriteLine("Select the Platform you want to check names for");
+            Console.WriteLine("1. GitHub");
+            Console.WriteLine("2. Snapchat");
+            Console.WriteLine("3. Leetcode");
+            Console.WriteLine("4. Codewars");
+            Console.WriteLine("5. YouTube");
+            Console.WriteLine("6. SteamID");
+            String username_type = Console.ReadLine();
+
+            check(username_type);
+
+        }
+    }
+    
+    class Program
+    {
+        
+        static void  Main(string[] args)
+        {
+            usernameHandler usr = new usernameHandler();
+
+            Console.WriteLine("--------------------------");
+            Console.WriteLine("- Multi Username Checker -");
+            Console.WriteLine("--------------------------");
+            Console.WriteLine("");
+            Console.WriteLine("Instructions:");
+            Console.WriteLine("Placer a file called username.txt into the same directory as this file");
+            Console.WriteLine("Put in all the usernames you want to check -> each username in a seperate line");
+            Console.WriteLine("");
+
+
+            while (true)
+            {
+                usr.start();
+                String check = Console.ReadLine();
+                if (check.ToLower().Equals("n"))
+                {
+                    break;
+                }
+            }
+        }
+        
+    }
