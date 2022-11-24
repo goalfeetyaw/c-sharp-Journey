@@ -1,4 +1,4 @@
-﻿    class usernameHandler
+    class usernameHandler
     {
         static IDictionary<string, string> url = new Dictionary<string, string>()
         {
@@ -84,36 +84,42 @@
 
                     var response = await client.GetAsync(final_url);
                     var resCode = response.StatusCode;
-                    bool valid_res = (int)resCode == 200 || (int)resCode == 404;
 
-                    if (valid_res)
+                    int res = (int)resCode;
+
+                    if(res == 429)
                     {
-                            bool valid = (int)resCode != 200;
-                            if (valid)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine(platform[type] + " username: " + line + " is not taken!");
-                                if(output)
-                                {
-                                   File.AppendAllText(platform[type] + ".txt", line + " -> Not Taken \n");
-                                   Console.WriteLine("Saved to " + platform[type] + ".txt");
-                                }
-                                 Console.ForegroundColor = ConsoleColor.White;
-                            }
-                            else
-                            {
-                                   Console.ForegroundColor = ConsoleColor.Red;
-                                   Console.WriteLine(platform[type] + " username: " + line + " is taken!");
-                                   Console.ForegroundColor = ConsoleColor.White;
-                            }
+                        while(res == 429)
+                        {
+                            Console.WriteLine("Rate limitation detected, sleeping for 10 seconds");
+                            Thread.Sleep(10000);
+                             response = await client.GetAsync(final_url);
+                             resCode = response.StatusCode;
+                             res = (int)resCode;
+                        }
                     }
-                    else
+                    else if (res == 404)
                     {
-                        Console.WriteLine("Error sending request -> " + resCode);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(platform[type] + " username: " + line + " is not taken!");
+                        if (output)
+                        {
+                            File.AppendAllText(platform[type] + ".txt", line + " -> Not Taken \n");
+                            Console.WriteLine("Saved to " + platform[type] + ".txt");
+                        }
+                        Console.ForegroundColor = ConsoleColor.White;
                     }
-                    
-                    
-            }
+                    else if (res == 200)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(platform[type] + " username: " + line + " is taken!");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+
+
+
+        }
             Console.WriteLine("would you like to check another platform? (Y/N)");
         }
 
