@@ -151,7 +151,7 @@
             Console.WriteLine("--------------------------");
             Console.WriteLine("");
             Console.WriteLine("Instructions:");
-            Console.WriteLine("Placer a file called username.txt into the same directory as this file");
+            Console.WriteLine("Place a file called username.txt into the same directory as this file");
             Console.WriteLine("Put in all the usernames you want to check -> each username in a seperate line");
             Console.WriteLine("");
 
