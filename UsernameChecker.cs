@@ -1,13 +1,17 @@
     class usernameHandler
     {
-        static IDictionary<string, string> url = new Dictionary<string, string>()
+    static IDictionary<string, string> url = new Dictionary<string, string>()
         {
             {"1", "https://github.com/"},
             {"2", "https://www.snapchat.com/add/"},
-            {"3", "https://leetcode.com/"}, 
+            {"3", "https://leetcode.com/"},
             {"4", "https://www.codewars.com/users/"},
             {"5", "https://www.youtube.com/@" },
-            {"6", "https://steamcommunity.com/id" }
+            {"6", "https://steamcommunity.com/id" },
+            {"7", "https://vimeo.com/" },
+            {"8", "https://www.wattpad.com/user/" },
+            {"9", "https://soundcloud.com/" },
+            {"10", "https://giphy.com/" }
         };
 
         static IDictionary<string, string> platform = new Dictionary<string, string>()
@@ -17,7 +21,11 @@
             {"3", "Leetcode"},
             {"4", "Codewars"},
             {"5", "YouTube" },
-            {"6" ,"SteamID" }
+            {"6", "SteamID" },
+            {"7", "Vimeo" },
+            {"8", "Wattpad" },
+            {"9", "Soundcloud" },
+            {"10", "Giphy" }
         };
 
         static readonly HttpClient client = new HttpClient();
@@ -115,6 +123,12 @@
                         Console.WriteLine(platform[type] + " username: " + line + " is taken!");
                         Console.ForegroundColor = ConsoleColor.White;
                     }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Error: " + resCode);
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
 
 
 
@@ -132,9 +146,24 @@
             Console.WriteLine("4. Codewars");
             Console.WriteLine("5. YouTube");
             Console.WriteLine("6. SteamID");
-            String username_type = Console.ReadLine();
+            Console.WriteLine("7. Vimeo");
+            Console.WriteLine("8. Wattpad");
+            Console.WriteLine("9. Soundcloud");
+            Console.WriteLine("10. Giphy");
+        
+            String type = Console.ReadLine();
 
-            check(username_type);
+            if (type == "1" || type == "2" || type == "3" || type == "4" || type == "5" || type == "6" || type == "7" || type == "8" || type == "9" || type == "10")
+            {
+                check(type).Wait();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid input!");
+                Console.ForegroundColor = ConsoleColor.White;
+                start();
+            }
 
         }
     }
@@ -151,7 +180,7 @@
             Console.WriteLine("--------------------------");
             Console.WriteLine("");
             Console.WriteLine("Instructions:");
-            Console.WriteLine("Place a file called username.txt into the same directory as this file");
+            Console.WriteLine("Placer a file called username.txt into the same directory as this file");
             Console.WriteLine("Put in all the usernames you want to check -> each username in a seperate line");
             Console.WriteLine("");
 
